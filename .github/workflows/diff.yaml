@@ -1,0 +1,33 @@
+name: diff-files
+
+on:
+  pull_request:
+    branches: ['main']
+    types: ['closed']
+
+defaults:
+  run:
+    shell: 'bash -Eeuo pipefail -x {0}'
+
+jobs:
+  change-detection:
+    name: Detect any changed files
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Get changes
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          list-files: json
+          filters: |
+            files_changed:
+              - test_diff/**
+      - name: Print the changes
+        if: ${{ github.event.pull_request.merged == true }}
+        run: |
+          echo '${{ steps.filter.outputs.modules_files }}'
+        id: jq
