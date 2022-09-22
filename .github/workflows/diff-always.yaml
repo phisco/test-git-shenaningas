@@ -1,9 +1,7 @@
 name: diff-files
 
 on:
-  pull_request:
-    branches: ['main']
-    types: ['closed']
+  push:
 
 defaults:
   run:
@@ -27,7 +25,6 @@ jobs:
             fc:
               - test_diff/**
       - name: Print the changes
-        if: ${{ github.event.pull_request.merged == true }}
         run: |
           echo '${{ steps.filter.outputs.fc_files }}' | jq
         id: jq
